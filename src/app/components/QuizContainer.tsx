@@ -44,12 +44,25 @@ export default function QuizContainer({
         <div className="text-6xl font-bold text-indigo-600 mb-6">
           {score}/{questions.length}
         </div>
-        <button
-          onClick={onBack}
-          className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          Back to Home
-        </button>
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
+          <button
+            onClick={() => {
+              setCurrent(0);
+              setShowScore(false);
+              setScore(0);
+              setSelectedOption(null);
+            }}
+            className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
+          >
+            Retry Quiz
+          </button>
+          <button
+            onClick={onBack}
+            className="px-6 py-2 bg-gray-200 text-indigo-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold border border-gray-300"
+          >
+            Back to Home
+          </button>
+        </div>
       </div>
     );
   }
