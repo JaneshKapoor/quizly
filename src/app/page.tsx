@@ -4,9 +4,11 @@
 import { useState } from 'react';
 import QuizCard from './components/QuizCard';
 import QuizContainer from './components/QuizContainer';
+import GKSetupCard from './components/GKSetupCard';
 
 export default function Home() {
   const [selectedQuiz, setSelectedQuiz] = useState<'gk' | 'pdf' | null>(null);
+  const [showGKSetup, setShowGKSetup] = useState(false);
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
@@ -20,7 +22,7 @@ export default function Home() {
             <QuizCard
               title="General Knowledge"
               description="Test your knowledge with 10 random questions"
-              onClick={() => setSelectedQuiz('gk')}
+              onClick={() => setShowGKSetup(true)}
             />
             <QuizCard
               title="PDF Quiz"
@@ -32,6 +34,17 @@ export default function Home() {
           <QuizContainer
             type={selectedQuiz}
             onBack={() => setSelectedQuiz(null)}
+          />
+        )}
+
+        {showGKSetup && (
+          <GKSetupCard
+            onClose={() => setShowGKSetup(false)}
+            onStart={(opts) => {
+              // Will use opts to start the quiz in the future
+              console.log(opts);
+              setShowGKSetup(false);
+            }}
           />
         )}
       </div>

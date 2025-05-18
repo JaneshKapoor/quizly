@@ -10,7 +10,7 @@ interface QuizCardProps {
       <button
         onClick={onClick}
         className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow
-                   border border-gray-100 hover:border-indigo-200 text-left"
+                   border border-gray-100 hover:border-indigo-200 text-left cursor-pointer"
       >
         <h2 className="text-2xl font-semibold text-indigo-900 mb-2">{title}</h2>
         <p className="text-gray-600">{description}</p>
