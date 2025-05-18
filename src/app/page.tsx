@@ -51,55 +51,57 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center text-indigo-900 mb-12">
-          Quizly
-        </h1>
+    <>
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold text-center text-indigo-900 mb-12">
+            Quizly
+          </h1>
 
-        {loading && (
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mb-6"></div>
-            <p className="text-lg text-indigo-700 font-semibold">Preparing your quiz...</p>
-          </div>
-        )}
+          {loading && (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-indigo-600 mb-6"></div>
+              <p className="text-lg text-indigo-700 font-semibold">Preparing your quiz...</p>
+            </div>
+          )}
 
-        {!selectedQuiz && !loading && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <QuizCard
-              title="General Knowledge"
-              description="Test your knowledge with random questions"
-              onClick={() => setShowGKSetup(true)}
+          {!selectedQuiz && !loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <QuizCard
+                title="General Knowledge"
+                description="Test your knowledge with random questions"
+                onClick={() => setShowGKSetup(true)}
+              />
+              <QuizCard
+                title="PDF Quiz"
+                description="Upload a PDF and generate custom questions"
+                onClick={() => setSelectedQuiz('pdf')}
+              />
+            </div>
+          )}
+
+          {showGKSetup && (
+            <GKSetupCard
+              onClose={() => setShowGKSetup(false)}
+              onStart={startGKQuiz}
             />
-            <QuizCard
-              title="PDF Quiz"
-              description="Upload a PDF and generate custom questions"
-              onClick={() => setSelectedQuiz('pdf')}
+          )}
+
+          {selectedQuiz === 'gk' && questions.length > 0 && (
+            <QuizContainer
+              type="gk"
+              onBack={() => setSelectedQuiz(null)}
+              questions={questions}
+              score={score}
+              setScore={setScore}
             />
-          </div>
-        )}
+          )}
+        </div>
+      </main>
 
-        {showGKSetup && (
-          <GKSetupCard
-            onClose={() => setShowGKSetup(false)}
-            onStart={startGKQuiz}
-          />
-        )}
-
-        {selectedQuiz === 'gk' && questions.length > 0 && (
-          <QuizContainer
-            type="gk"
-            onBack={() => setSelectedQuiz(null)}
-            questions={questions}
-            score={score}
-            setScore={setScore}
-          />
-        )}
-      </div>
-    </main>
-
-    <footer className="text-center text-gray-600 mt-8 pb-4">
-      Made with ❤️ by Janesh Kapoor (@<a href="https://www.linkedin.com/in/janeshkapoor/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">janeshkapoor</a>)
-    </footer>
+      <footer className="text-center text-gray-600 mt-8 pb-4">
+        Made with ❤️ by Janesh Kapoor (@<a href="https://www.linkedin.com/in/janeshkapoor/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">janeshkapoor</a>)
+      </footer>
+    </>
   );
 }
