@@ -2,8 +2,8 @@
 'use client';
 
 import { useState } from 'react';
-import QuizCard from '@/components/QuizCard';
-import QuizContainer from '@/components/QuizContainer';
+import QuizCard from './components/QuizCard';
+import QuizContainer from './components/QuizContainer';
 
 export default function Home() {
   const [selectedQuiz, setSelectedQuiz] = useState<'gk' | 'pdf' | null>(null);
@@ -14,7 +14,7 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-center text-indigo-900 mb-12">
           Quizly
         </h1>
-        
+
         {!selectedQuiz ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <QuizCard
