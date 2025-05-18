@@ -68,7 +68,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <QuizCard
               title="General Knowledge"
-              description="Test your knowledge with 10 random questions"
+              description="Test your knowledge with random questions"
               onClick={() => setShowGKSetup(true)}
             />
             <QuizCard
@@ -97,5 +97,9 @@ export default function Home() {
         )}
       </div>
     </main>
+
+    <footer className="text-center text-gray-600 mt-8 pb-4">
+      Made with ❤️ by Janesh Kapoor (@<a href="https://www.linkedin.com/in/janeshkapoor/" target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">janeshkapoor</a>)
+    </footer>
   );
 }
