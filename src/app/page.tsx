@@ -4,10 +4,12 @@ import { useState } from 'react';
 import QuizCard from './components/QuizCard';
 import QuizContainer from './components/QuizContainer';
 import GKSetupCard from './components/GKSetupCard';
+import PDFQuizSetupCard from './components/PDFQuizSetupCard';
 
 export default function Home() {
   const [selectedQuiz, setSelectedQuiz] = useState<'gk' | 'pdf' | null>(null);
   const [showGKSetup, setShowGKSetup] = useState(false);
+  const [showPDFSetup, setShowPDFSetup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [score, setScore] = useState(0);
@@ -50,6 +52,37 @@ export default function Home() {
     }
   };
 
+  const startPDFQuiz = async (opts: {
+    pdfText: string;
+    difficulty: string;
+    numQuestions: number;
+  }) => {
+    setShowPDFSetup(false);
+    setLoading(true);
+    setScore(0);
+    setQuestions([]);
+    try {
+      const res = await fetch('/api/pdf-quiz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(opts),
+      });
+      const data = await res.json();
+      console.log('PDF API response:', data);
+      if (!data.questions || !Array.isArray(data.questions)) {
+        alert('Failed to load questions. Check console for details.');
+        return;
+      }
+      setQuestions(data.questions);
+      setSelectedQuiz('pdf');
+    } catch (err) {
+      console.error('PDF fetch error:', err);
+      alert('Failed to load questions.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
@@ -75,7 +108,7 @@ export default function Home() {
               <QuizCard
                 title="PDF Quiz"
                 description="Upload a PDF and generate custom questions"
-                onClick={() => setSelectedQuiz('pdf')}
+                onClick={() => setShowPDFSetup(true)}
               />
             </div>
           )}
@@ -87,9 +120,26 @@ export default function Home() {
             />
           )}
 
+          {showPDFSetup && (
+            <PDFQuizSetupCard
+              onClose={() => setShowPDFSetup(false)}
+              onStart={startPDFQuiz}
+            />
+          )}
+
           {selectedQuiz === 'gk' && questions.length > 0 && (
             <QuizContainer
               type="gk"
+              onBack={() => setSelectedQuiz(null)}
+              questions={questions}
+              score={score}
+              setScore={setScore}
+            />
+          )}
+
+          {selectedQuiz === 'pdf' && questions.length > 0 && (
+            <QuizContainer
+              type="pdf"
               onBack={() => setSelectedQuiz(null)}
               questions={questions}
               score={score}

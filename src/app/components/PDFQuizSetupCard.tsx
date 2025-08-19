@@ -7,8 +7,6 @@ type PDFQuizOptions = {
   numQuestions: number;
 };
 
-type PDFTextItem = { str: string };
-
 export default function PDFQuizSetupCard({
   onClose,
   onStart,
@@ -23,27 +21,43 @@ export default function PDFQuizSetupCard({
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // PDF.js dynamic import for SSR compatibility
+  // Server-side PDF text extraction
   const extractTextFromPDF = async (file: File) => {
     setLoading(true);
-    // @ts-expect-error: No type definitions for pdfjs-dist/legacy/build/pdf
-    const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf');
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.js`;
+    try {
+      // Create FormData to send file to server
+      const formData = new FormData();
+      formData.append('pdf', file);
 
-    const reader = new FileReader();
-    reader.onload = async function () {
-      const typedarray = new Uint8Array(this.result as ArrayBuffer);
-      const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
-      let text = '';
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        text += (content.items as PDFTextItem[]).map(item => item.str).join(' ') + '\n';
+      // Send file to server for processing
+      const response = await fetch('/api/extract-pdf', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to extract text');
       }
-      setPdfText(text);
+
+      if (!data.text || data.text.trim().length === 0) {
+        alert('No text found in PDF. Please try a PDF with selectable text (not scanned images).');
+        setLoading(false);
+        return;
+      }
+
+      console.log('Extracted text length:', data.text.length);
+      console.log('Number of pages:', data.pages);
+      console.log('First 200 chars:', data.text.substring(0, 200));
+
+      setPdfText(data.text);
       setLoading(false);
-    };
-    reader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.error('PDF extraction error:', error);
+      alert(`Failed to extract text from PDF: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setLoading(false);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
